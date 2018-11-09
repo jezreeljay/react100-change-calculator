@@ -16,7 +16,10 @@ module.exports = {
     alias: {
       react: path.join(__dirname, 'node_modules', 'react')
     },
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx', '.css'],
+    modules: [
+      'node_modules'
+    ]      
   },
 
   module: {
@@ -30,6 +33,10 @@ module.exports = {
         test: /\.html$/,
         loader: 'file?name=[name].[ext]',
       },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      }
     ],
   },
 };
