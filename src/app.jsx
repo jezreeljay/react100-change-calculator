@@ -6,7 +6,7 @@ class App extends Component {
     this.state = {
       amountDue: 0,
       amountReceived: 0,
-      changeDue: 0,
+      change: 0,
       moneyOwed: 0,
       twenties: 0,
       tens: 0,
@@ -35,24 +35,41 @@ class App extends Component {
       [name]: value
     });
   }
-  
-  calculate(event) {
+
+  calculate() {
     const validateDue = this.state.amountDue;
     const validateReceived = this.state.amountReceived;
+    const validateChange = validateReceived - validateDue;
     
+    function alertBox() {
+      alert(`Woops. Looks like I have nothing to calculate! ${String.fromCodePoint(129335)}`)
+    };
+  
     this.setState({
-      value: event.target.value,
       alertDisplay: (validateDue > 0 && validateReceived > 0) ? true : false,
       alert: (validateReceived >= validateDue) ? true : false,
       alertType: (validateReceived > validateDue) ? 'alert-success' : ((validateReceived != validateDue)) ? `alert-danger` : 'alert-info',
-      changeDue: validateReceived - validateDue,
-      moneyOwed: validateDue - validateReceived,
+      change: validateChange,
+      moneyOwed: (validateDue > validateReceived) ? (validateDue - validateReceived) : 0,
+      twenties: Math.floor(validateChange/20),
+      tens: Math.floor((validateChange/10)%2),
+      fives: Math.floor((validateChange/5)%2),
+      ones: Math.floor(validateChange%5),
+      quarters: Math.floor(((validateChange*100)%100)/25),
+      dimes: Math.floor((((validateChange*100)%100)%25)/10),
+      nickels: Math.floor(((((validateChange*100)%100)%25)%10)/5),
+      pennies: Math.floor(((((validateChange*100)%100)%25)%10)%5),
     }, () => {
-      if (validateDue !== 0 && validateReceived !== 0) {
-        document.getElementById('alertArea').innerHTML = (validateReceived > validateDue) ? `The total change due is: $${this.state.changeDue}` : ((validateReceived != validateDue)) ? `Additional money owed: $${this.state.moneyOwed}` : 'Change not due.';
-      } else {
-        alert(`Woops. Looks like I have nothing to calculate! ${String.fromCodePoint(129335)}`);
-      }
+        if (validateDue === undefined || validateReceived === undefined) {
+          alertBox();
+        } else {
+          console.log(this.state);
+          if (validateDue !== 0 && validateReceived !== 0) {
+            document.getElementById('alertArea').innerHTML = (validateReceived > validateDue) ? `The total change due is $${this.state.change.toFixed(2)}` : ((validateReceived != validateDue)) ? `Additional money owed $${this.state.moneyOwed.toFixed(2)}` : 'Change not due.';
+          } else {
+            alertBox();
+          };
+        };
     });
   }
 
@@ -84,11 +101,11 @@ class App extends Component {
               <div className="card-body">
                 <div className="form-group">
                   <label className="font-weight-bold" htmlFor="due"> How much is due?</label>
-                  <input className="form-control" type="number" name="amountDue" value={this.state.amountDue} onChange={this.handleChange}/>
+                  <input className="form-control" type="number" name="amountDue" placeholder="0" value={this.state.amountDue} onChange={this.handleChange}/>
                 </div>
                 <div className="form-group">
                 <label className="font-weight-bold" htmlFor="received">How much was received?</label>
-                <input className="form-control" type="number" name="amountReceived" value={this.state.amountReceived} onChange={this.handleChange}/> 
+                <input className="form-control" type="number" name="amountReceived" placeholder="0" value={this.state.amountReceived} onChange={this.handleChange}/> 
                 </div>
                 <div className="form-group">
                   <button className="btn btn-primary btn-lg btn-block" type="submit" onClick={this.calculate}>Calculate</button>
@@ -108,25 +125,25 @@ class App extends Component {
                   <div className="col-lg-3 mb-3">
                     <div className="card card-body text-center bg-light">
                       <h6 className="font-weight-bold">Twenties</h6>
-                      <p id="" className="text-muted"></p>
+                      <p className="change text-muted">{this.state.twenties}</p>
                     </div>
                   </div>
                   <div className="col-lg-3 mb-3">
                     <div className="card card-body text-center bg-light">
                       <h6 className="font-weight-bold">Tens</h6>
-                      <p id="" className="text-muted"></p>
+                      <p className="change text-muted">{this.state.tens}</p>
                     </div>
                   </div>
                   <div className="col-lg-3 mb-3">
                     <div className="card card-body text-center bg-light">
                       <h6 className="font-weight-bold">Fives</h6>
-                      <p id="" className="text-muted"></p>
+                      <p className="change text-muted">{this.state.fives}</p>
                     </div>
                   </div>
                   <div className="col-lg-3 mb-3">
                     <div className="card card-body text-center bg-light">
                       <h6 className="font-weight-bold">Ones</h6>
-                      <p id="" className="text-muted"></p>
+                      <p className="change text-muted">{this.state.ones}</p>
                     </div>
                   </div>
                 </div>
@@ -134,25 +151,25 @@ class App extends Component {
                   <div className="col-lg-3 mb-3">
                     <div className="card card-body text-center bg-light">
                       <h6 className="font-weight-bold">Quarters</h6>
-                      <p id="" className="text-muted"></p>
+                      <p className="change text-muted">{this.state.quarters}</p>
                   </div>
                   </div>
                     <div className="col-lg-3 mb-3">
                     <div className="card card-body text-center bg-light">
                       <h6 className="font-weight-bold">Dimes</h6>
-                      <p id="" className="text-muted"></p>
+                      <p className="change text-muted">{this.state.dimes}</p>
                     </div>
                   </div>
                     <div className="col-lg-3 mb-3">
                     <div className="card card-body text-center bg-light">
                       <h6 className="font-weight-bold">Nickels</h6>
-                      <p id="" className="text-muted"></p>
+                      <p className="change text-muted">{this.state.nickels}</p>
                     </div>
                   </div>
                     <div className="col-lg-3 mb-3">
                     <div className="card card-body text-center bg-light">
                       <h6 className="font-weight-bold">Pennies</h6>
-                      <p id="" className="text-muted"></p>
+                      <p className="change text-muted">{this.state.pennies}</p>
                     </div>
                   </div>
                 </div>
